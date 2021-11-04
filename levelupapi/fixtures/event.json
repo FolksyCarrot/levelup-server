@@ -1,0 +1,14 @@
+[
+    {
+        "model": "levelupapi.event",
+        "pk": 1,
+        "fields": {
+           "game": 1,
+            "description": "blueberry",
+            "date": "2000-10-23",
+            "time": "18:43",
+            "organizer": 1
+            
+        }
+    }
+]
