@@ -5,22 +5,22 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from levelupapi.models import Event, EventGamer, Gamer, event_gamer
+from levelupapi.models import Event, EventGamer, Gamer, event_gamer, Game
 from django.contrib.auth.models import User
 
 class EventView(ViewSet):
     
     def create(self, request):
         gamer = Gamer.objects.get(user = request.auth.user)
-        event_gamer = EventGamer.objects.get(pk=request.data["eventGamerId"])
+        game = Game.objects.get(pk=request.data["gameId"])
 
         try:
             event = Event.objects.create(
-                game =request.data["gameId"],
+                game=game,
                 description =request.data["description"],
                 date = request.data["date"],
                 time =request.data["time"],
-                organizer =Gamer.objects.get(user=request.auth.user)
+                organizer =gamer
             )
             serializer=EventSerializer(event, context = {'request': request})
             return Response(serializer.data)
@@ -45,8 +45,7 @@ class EventView(ViewSet):
         event.time = request.data["time"],
         event.organizer = request.data["organizer"]
 
-        event_gamer = EventGamer.objects.get(pk=request.data["eventGamerId"])
-        event.event_gamer = event_gamer
+        
         event.save()
 
         return Response({}, status=status.HTTP_204_NO_CONTENT)
