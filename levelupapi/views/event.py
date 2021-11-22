@@ -34,8 +34,8 @@ class EventView(ViewSet):
             event = Event.objects.get(pk=pk)
             serializer = EventSerializer(event, context = {'request': request})
             return Response(serializer.data)
-        except Exception as ex:
-            return HttpResponseServerError(ex)
+        except:
+            return Response(status=status.HTTP_404_NOT_FOUND)
     
     def update(self, request, pk=None):
         gamer = Gamer.objects.get(user=request.auth.user)
@@ -133,12 +133,18 @@ class GamerSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     class Meta: 
         model = Gamer
-        fields = ('user',)
+        fields = ('user','id')
+        
+class GameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Game
+        fields = ('id', 'title', 'maker')
 
 class EventSerializer(serializers.ModelSerializer):
     organizer = GamerSerializer()
     joined = serializers.BooleanField(required=False)
-
+    game = GameSerializer()
+    
     class Meta:
         model = Event
         fields = ('id', 'game', 'description', 'date', 'time', 'organizer', 'attendees', 'joined')
